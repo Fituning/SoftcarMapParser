@@ -1,8 +1,12 @@
 <!-- Header -->
-<header class="navbar navbar-dark bg-dark px-3 sticky-top">
-  <a class="navbar-brand fw-semibold" routerLink="/">Softcar Map Parser</a>
+<header class="navbar navbar-dark bg-dark px-3 sticky-top d-flex justify-content-between align-items-center">
+  <div class="d-flex align-items-center gap-2">
+    <!-- Burger visible partout -->
+    <button class="btn btn-outline-light" (click)="toggleSidebar()">☰</button>
+    <a class="navbar-brand fw-semibold mb-0" routerLink="/">Softcar Map Parser</a>
+  </div>
 
-  <!-- Fichier courant (badge) -->
+  <!-- Fichier courant -->
   <div class="text-light small">
     <span class="me-2">Fichier:</span>
     <span class="badge text-bg-info" *ngIf="(fileName$ | async) as f; else nofile">{{ f }}</span>
@@ -10,38 +14,28 @@
   </div>
 </header>
 
-<div class="container-fluid">
-  <div class="row">
-    <!-- Sidebar (md+ : verticale) -->
-    <nav class="col-md-3 col-lg-2 d-none d-md-block bg-light sidebar min-vh-100 py-3 border-end">
-      <ul class="nav nav-pills flex-column gap-1">
-        <li class="nav-item">
-          <a routerLink="/" routerLinkActive="active" class="nav-link">🏠 Accueil</a>
-        </li>
-        <li class="nav-item">
-          <a routerLink="/resume" routerLinkActive="active" class="nav-link">🧾 Résumé</a>
-        </li>
-        <li class="nav-item">
-          <a routerLink="/detail" routerLinkActive="active" class="nav-link">🔍 Détail</a>
-        </li>
-      </ul>
-      <div class="px-3 mt-4 small text-muted">
-        <div>Astuce: passe en mobile pour la nav horizontale.</div>
-      </div>
-    </nav>
+<!-- Backdrop (mobile) -->
+<div class="app-backdrop d-md-none" *ngIf="sidebarOpen" (click)="closeSidebar()"></div>
 
-    <!-- Nav horizontale (xs-sm) -->
-    <nav class="d-md-none bg-light border-bottom">
-      <ul class="nav nav-underline justify-content-around py-2">
-        <li class="nav-item"><a routerLink="/" routerLinkActive="active" class="nav-link">Accueil</a></li>
-        <li class="nav-item"><a routerLink="/resume" routerLinkActive="active" class="nav-link">Résumé</a></li>
-        <li class="nav-item"><a routerLink="/detail" routerLinkActive="active" class="nav-link">Détail</a></li>
-      </ul>
-    </nav>
+<!-- Layout -->
+<div class="app-layout" [class.sidebar-open]="sidebarOpen">
+  <!-- Sidebar (desktop + mobile) -->
+  <aside class="app-sidebar bg-light border-end">
+    <ul class="nav nav-pills flex-column gap-1 p-3">
+      <li class="nav-item">
+        <a routerLink="/" routerLinkActive="active" class="nav-link" >🏠 Accueil</a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/resume" routerLinkActive="active" class="nav-link" >🧾 Résumé</a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/detail" routerLinkActive="active" class="nav-link" >🔍 Détail</a>
+      </li>
+    </ul>
+  </aside>
 
-    <!-- Contenu -->
-    <main class="col-md-9 col-lg-10 p-3">
-      <router-outlet />
-    </main>
-  </div>
+  <!-- Contenu -->
+  <main class="app-content p-3">
+    <router-outlet />
+  </main>
 </div>

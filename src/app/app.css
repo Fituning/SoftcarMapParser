@@ -1,5 +1,50 @@
-/* Sidebar prend toute la hauteur sous le header */
-.sidebar { position: sticky; top: 56px; }
+/* Layout en grid: [sidebar] [content] */
+.app-layout {
+  display: grid;
+  grid-template-columns: 0px 1fr;   /* sidebar fermée */
+  transition: grid-template-columns 0.25s ease;
+}
 
-/* Améliore le contraste des liens actifs */
+/* Largeur sidebar quand ouverte */
+.app-layout.sidebar-open {
+  grid-template-columns: 240px 1fr; /* desktop + tablette */
+}
+
+/* La sidebar occupe toute la hauteur sous le header */
+.app-sidebar {
+  position: sticky;
+  top: 56px;          /* hauteur du header */
+  height: calc(100vh - 56px);
+  overflow-y: auto;
+}
+
+/* Backdrop mobile */
+.app-backdrop {
+  position: fixed;
+  inset: 56px 0 0 0;  /* sous le header */
+  background: rgba(0,0,0,.35);
+  z-index: 1049;
+}
+
+/* Sur mobile, on fait “drawer”: la sidebar passe en overlay */
+@media (max-width: 767.98px) {
+  .app-layout {
+    grid-template-columns: 1fr;            /* content full width */
+  }
+  .app-layout .app-sidebar {
+    position: fixed;
+    top: 56px;
+    left: 0;
+    width: 240px;
+    height: calc(100vh - 56px);
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    z-index: 1050;
+  }
+  .app-layout.sidebar-open .app-sidebar {
+    transform: translateX(0);
+  }
+}
+
+/* Lien actif un peu plus lisible */
 .nav-link.active { font-weight: 600; }
