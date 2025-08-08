@@ -1,0 +1,24 @@
+<h4 class="mb-3">Détail du fichier</h4>
+<div *ngIf="(file$ | async) as file; else nofile">
+  <div class="alert alert-info">Fichier analysé: <strong>{{ file }}</strong></div>
+
+  <!-- Placeholder table -->
+  <div class="table-responsive">
+    <table class="table table-sm table-hover align-middle">
+      <thead class="table-light">
+      <tr>
+        <th>Section</th>
+        <th>Adresse</th>
+        <th>Taille</th>
+        <th>Type</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr><td colspan="4" class="text-muted">Pas de données (UI only pour l’instant)</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<ng-template #nofile>
+  <div class="alert alert-secondary">Aucun fichier sélectionné pour l’instant.</div>
+</ng-template>

@@ -1,0 +1,5 @@
+/* Sidebar prend toute la hauteur sous le header */
+.sidebar { position: sticky; top: 56px; }
+
+/* Améliore le contraste des liens actifs */
+.nav-link.active { font-weight: 600; }

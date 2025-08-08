@@ -1,0 +1,29 @@
+<h4 class="mb-3">Résumé du fichier</h4>
+<div *ngIf="(file$ | async) as file; else nofile">
+  <div class="alert alert-info">Fichier analysé: <strong>{{ file }}</strong></div>
+
+  <!-- Placeholder résumé -->
+  <div class="row g-3">
+    <div class="col-md-4">
+      <div class="card h-100"><div class="card-body">
+        <div class="fw-semibold mb-1">Sections détectées</div>
+        <div class="display-6">—</div>
+      </div></div>
+    </div>
+    <div class="col-md-4">
+      <div class="card h-100"><div class="card-body">
+        <div class="fw-semibold mb-1">Taille totale</div>
+        <div class="display-6">—</div>
+      </div></div>
+    </div>
+    <div class="col-md-4">
+      <div class="card h-100"><div class="card-body">
+        <div class="fw-semibold mb-1">Anomalies</div>
+        <div class="display-6">—</div>
+      </div></div>
+    </div>
+  </div>
+</div>
+<ng-template #nofile>
+  <div class="alert alert-secondary">Aucun fichier sélectionné pour l’instant.</div>
+</ng-template>
