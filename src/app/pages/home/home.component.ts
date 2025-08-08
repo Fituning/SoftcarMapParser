@@ -14,7 +14,15 @@ export class HomeComponent {
   private parsedStore = inject(ParsedDataService);
 
   parseMsg = signal<string>('');
-  parseOk  = signal<boolean | null>(null); // null = rien fait, true/false = statut
+  parseOk  = signal<boolean | null>(null);
+
+  ngOnInit() {
+    const entries = this.parsedStore.entries;
+    if (entries && entries.length > 0) {
+      this.parseOk.set(true);
+      this.parseMsg.set(`✅ Parsing OK — ${entries.length} entrées`);
+    }
+  }
 
   async openAndParse() {
     // 1) Choix du fichier (via Electron)
