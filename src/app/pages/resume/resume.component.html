@@ -1,6 +1,9 @@
 <h4 class="mb-3">Résumé du fichier</h4>
 <div *ngIf="(file$ | async) as file; else nofile">
-  <div class="alert alert-info">Fichier analysé: <strong>{{ file }}</strong></div>
+  <div class="alert alert-info">
+    <p>Fichier analysé: : {{ file }}</p>
+    <p *ngIf="count$ | async as entries">Nombre d’entrées : {{ entries?.length ?? 0 }}</p>
+  </div>
 
   <!-- Placeholder résumé -->
   <div class="row g-3">
