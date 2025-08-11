@@ -2,6 +2,8 @@ import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FileStateService } from '../../shared/file-state.service';
 import { ParsedDataService } from '../../shared/parsed-data.service';
+import {App} from '../../app';
+import {SidebarService} from '../../shared/sidebar.service';
 
 @Component({
   standalone: true,
@@ -12,6 +14,7 @@ import { ParsedDataService } from '../../shared/parsed-data.service';
 export class HomeComponent {
   private fileState = inject(FileStateService);
   private parsedStore = inject(ParsedDataService);
+  private sidebar = inject(SidebarService);
 
   parseMsg = signal<string>('');
   parseOk  = signal<boolean | null>(null);
@@ -50,6 +53,8 @@ export class HomeComponent {
     this.fileState.setFileName(onlyName);
     this.parseOk.set(true);
     this.parseMsg.set(`✅ Parsing OK — ${entries.length} entrées`);
+
+    this.sidebar.open();
   }
 
   clear() {

@@ -1,7 +1,8 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { FileStateService } from './shared/file-state.service';
+import { SidebarService } from './shared/sidebar.service';
 
 @Component({
   selector: 'app-root',
@@ -11,16 +12,8 @@ import { FileStateService } from './shared/file-state.service';
   styleUrls: ['./app.css'],
 })
 export class App {
-  private fileState = inject(FileStateService);
-  fileName$ = this.fileState.fileName$;
+  fileName$ = inject(FileStateService).fileName$;
+  sidebar = inject(SidebarService); // 👈 on utilise le service
 
-  sidebarOpen = false;
-
-  toggleSidebar() {
-    this.sidebarOpen = !this.sidebarOpen;
-  }
-
-  closeSidebar() {
-    this.sidebarOpen = false;
-  }
+  // (tu peux virer les anciens signals/méthodes locales sidebarOpen/toggleSidebar/closeSidebar)
 }
