@@ -9,13 +9,18 @@
   <!-- Fichier courant -->
   <div class="text-light small">
     <span class="me-2">Fichier:</span>
-    <span class="badge text-bg-info" *ngIf="(fileName$ | async) as f; else nofile">{{ f }}</span>
-    <ng-template #nofile><span class="badge text-bg-secondary">Aucun</span></ng-template>
+    @if ((fileName$ | async); as f) {
+      <span class="badge text-bg-info">{{ f }}</span>
+    } @else {
+      <span class="badge text-bg-secondary">Aucun</span>
+    }
   </div>
 </header>
 
 <!-- Backdrop (mobile) -->
-<div class="app-backdrop d-md-none" *ngIf="sidebarOpen" (click)="closeSidebar()"></div>
+@if (sidebarOpen){
+  <div class="app-backdrop d-md-none" (click)="closeSidebar()"></div>
+}
 
 <!-- Layout -->
 <div class="app-layout" [class.sidebar-open]="sidebarOpen">

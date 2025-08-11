@@ -7,10 +7,14 @@
       <button class="btn btn-outline-secondary" (click)="clear()">Réinitialiser</button>
     </div>
 
-    <div class="mt-3" *ngIf="parseOk() !== null">
-      <div class="alert" [ngClass]="{'alert-success': parseOk(), 'alert-danger': parseOk() === false}">
-        {{ parseMsg() }}
+    @if (parseOk() !== null) {
+      <div class="mt-3">
+        <div class="alert" [ngClass]="{'alert-success': parseOk(), 'alert-danger': parseOk() === false}">
+          {{ parseMsg() }}
+        </div>
       </div>
-    </div>
+    }
+
+
   </div>
 </div>
