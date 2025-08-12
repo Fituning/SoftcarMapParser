@@ -1,0 +1,89 @@
+<div class="container py-4">
+  <!-- Titre -->
+  <div class="d-flex align-items-center mb-4">
+    <i class="bi bi-cpu fs-3 text-primary me-2"></i>
+    <h2 class="mb-0">Gestion des Devices</h2>
+  </div>
+
+  <!-- Boutons principaux -->
+  <div class="d-flex gap-2 mb-4">
+    <button class="btn btn-primary" (click)="startAdd()">
+      <i class="bi bi-plus-lg me-1"></i> Ajouter
+    </button>
+    <button class="btn btn-outline-secondary" (click)="exportJson()">
+      <i class="bi bi-download me-1"></i> Exporter JSON
+    </button>
+    <label class="btn btn-outline-info mb-0">
+      <i class="bi bi-upload me-1"></i> Importer JSON
+      <input type="file" accept="application/json" (change)="importJson($event)" hidden>
+    </label>
+  </div>
+
+  <!-- Formulaire ajout/édition -->
+  <div *ngIf="editing() as e" class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h5 class="card-title mb-3">
+        <i class="bi bi-cpu me-1"></i>
+        {{ e.id ? 'Modifier' : 'Ajouter' }} un device
+      </h5>
+      <div class="mb-3">
+        <label class="form-label">Nom</label>
+        <input class="form-control" [(ngModel)]="e.id" placeholder="Ex: NXP S32K144" />
+      </div>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Flash (B)</label>
+          <input type="number" class="form-control" [(ngModel)]="e.flashBytes" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">RAM (B)</label>
+          <input type="number" class="form-control" [(ngModel)]="e.ramBytes" />
+        </div>
+      </div>
+      <div class="mt-4 d-flex gap-2">
+        <button class="btn btn-success" (click)="save(e)">
+          <i class="bi bi-check-lg me-1"></i> Sauvegarder
+        </button>
+        <button class="btn btn-outline-secondary" (click)="cancelEdit()">
+          <i class="bi bi-x-lg me-1"></i> Annuler
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="card shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+        <tr>
+          <th>Nom</th>
+          <th>Flash</th>
+          <th>RAM</th>
+          <th class="text-center">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let d of dev.profiles()">
+          <td class="fw-semibold">{{ d.id }}</td>
+          <td>{{ d.flashBytes | number }} B</td>
+          <td>{{ d.ramBytes | number }} B</td>
+          <td class="text-center">
+            <button class="btn btn-sm btn-success me-1" (click)="edit(d)">
+              <i class="bi bi-pencil-square"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" (click)="delete(d.id)">
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="!dev.profiles().length">
+          <td colspan="4" class="text-center text-muted py-3">
+            <i class="bi bi-exclamation-circle me-1"></i> Aucun device enregistré
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

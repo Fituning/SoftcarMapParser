@@ -1,8 +1,9 @@
+// src/app/shared/device-profile.service.ts
 import { Injectable, signal, computed } from '@angular/core';
-import devicesJson from '../config/devices.default.json'; // ton JSON donné
+import devicesJson from '../config/devices.default.json';
 
 export interface DeviceProfile {
-  id: string;          // ex: "NXP S32K144"
+  id: string;
   flashBytes: number;
   ramBytes: number;
 }
@@ -14,11 +15,10 @@ export class DeviceProfileService {
   private _profiles = signal<DeviceProfile[]>(devicesJson as DeviceProfile[]);
   private _selectedId = signal<DeviceId>(this._profiles()[0]?.id ?? 'Custom');
 
-  // valeurs pour le mode Custom (pas dans le JSON)
   private _customFlash = signal(0);
   private _customRam   = signal(0);
 
-  profiles   = this._profiles.asReadonly();            // liste depuis le JSON (+ ce qu’on ajoutera plus tard)
+  profiles   = this._profiles.asReadonly();
   selectedId = this._selectedId.asReadonly();
   isCustom   = computed(() => this._selectedId() === 'Custom');
 
@@ -26,15 +26,12 @@ export class DeviceProfileService {
     this.isCustom() ? null : this._profiles().find(p => p.id === this._selectedId()) ?? null
   );
 
-  // Valeurs visibles partout (si Custom → champs custom, sinon profil sélectionné)
   flashBytes = computed(() => this.isCustom() ? this._customFlash() : (this.selectedProfile()?.flashBytes ?? 0));
   ramBytes   = computed(() => this.isCustom() ? this._customRam()   : (this.selectedProfile()?.ramBytes   ?? 0));
 
-  // Actions
   selectDevice(id: DeviceId) {
     this._selectedId.set(id);
     if (!this.isCustom()) {
-      // quand on choisit un device réel, pré-remplir les champs Custom avec ses valeurs (utile pour tweak)
       const p = this.selectedProfile();
       if (p) { this._customFlash.set(p.flashBytes); this._customRam.set(p.ramBytes); }
     }
@@ -42,7 +39,6 @@ export class DeviceProfileService {
   setCustomFlash(v: number) { this._customFlash.set(Math.max(0, v|0)); }
   setCustomRam(v: number)   { this._customRam.set(Math.max(0, v|0)); }
 
-  // Sauver le “Custom” comme vrai profil (en mémoire pour l’instant)
   saveCustomAsProfile(name: string) {
     const id = name.trim();
     if (!id) return;
@@ -53,5 +49,32 @@ export class DeviceProfileService {
       : [...this._profiles(), newP]
     );
     this._selectedId.set(id);
+  }
+
+  addProfile(profile: DeviceProfile) {
+    this._profiles.set([...this._profiles(), profile]);
+  }
+
+  updateProfile(profile: DeviceProfile) {
+    this._profiles.set(this._profiles().map(p => p.id === profile.id ? profile : p));
+  }
+
+  removeProfile(id: string) {
+    this._profiles.set(this._profiles().filter(p => p.id !== id));
+  }
+
+  exportToJson(): string {
+    return JSON.stringify(this._profiles(), null, 2);
+  }
+
+  importFromJson(jsonString: string) {
+    try {
+      const parsed = JSON.parse(jsonString) as DeviceProfile[];
+      if (Array.isArray(parsed)) {
+        this._profiles.set(parsed);
+      }
+    } catch (err) {
+      console.error('Erreur import JSON', err);
+    }
   }
 }
