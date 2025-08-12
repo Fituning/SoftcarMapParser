@@ -4,6 +4,7 @@ import { FileStateService } from '../../shared/file-state.service';
 import { ParsedDataService } from '../../shared/parsed-data.service';
 import {App} from '../../app';
 import {SidebarService} from '../../shared/sidebar.service';
+import {Router} from '@angular/router';
 
 @Component({
   standalone: true,
@@ -12,6 +13,7 @@ import {SidebarService} from '../../shared/sidebar.service';
   templateUrl: './home.component.html',
 })
 export class HomeComponent {
+  private router = inject(Router);
   private fileState = inject(FileStateService);
   private parsedStore = inject(ParsedDataService);
   private sidebar = inject(SidebarService);
@@ -55,6 +57,7 @@ export class HomeComponent {
     this.parseMsg.set(`✅ Parsing OK — ${entries.length} entrées`);
 
     this.sidebar.open();
+    this.router.navigate(['/resume']);
   }
 
   clear() {
