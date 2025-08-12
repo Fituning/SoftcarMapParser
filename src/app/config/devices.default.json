@@ -1,0 +1,5 @@
+[
+  {  "id": "NXP S32K144",   "flashBytes": 512000,  "ramBytes": 64000 },
+  {  "id": "NXP S32K146",   "flashBytes": 1024000, "ramBytes": 131072 },
+  {  "id": "STM32F407VG",   "flashBytes": 1048576, "ramBytes": 196608 }
+]

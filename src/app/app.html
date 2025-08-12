@@ -1,19 +1,46 @@
 <!-- Header -->
 <header class="navbar navbar-dark bg-dark px-3 sticky-top d-flex justify-content-between align-items-center">
   <div class="d-flex align-items-center gap-2">
-    <!-- Burger visible partout -->
     <button class="btn btn-outline-light" (click)="sidebar.toggle()">☰</button>
     <a class="navbar-brand fw-semibold mb-0" routerLink="/">Softcar Map Parser</a>
   </div>
 
-  <!-- Fichier courant -->
-  <div class="text-light small">
-    <span class="me-2">Fichier:</span>
-    @if ((fileName$ | async); as f) {
-      <span class="badge text-bg-info">{{ f }}</span>
-    } @else {
-      <span class="badge text-bg-secondary">Aucun</span>
-    }
+  <!-- Zone device + fichier courant -->
+  <div class="d-flex align-items-center gap-2">
+    <!-- Sélecteur de device -->
+    <div class="d-flex align-items-center gap-2">
+      <select class="form-select form-select-sm" style="min-width: 220px"
+              [ngModel]="dev.selectedId()"
+              (ngModelChange)="dev.selectDevice($event)">
+        <option *ngFor="let d of dev.profiles()" [ngValue]="d.id">{{ d.id }}</option>
+        <option [ngValue]="'Custom'">Custom</option>
+      </select>
+
+      <!-- Inputs numériques (activés seulement en Custom) -->
+      <input type="number" class="form-control form-control-sm w-auto"
+             placeholder="Flash (B)"
+             [disabled]="!dev.isCustom()"
+             [ngModel]="dev.flashBytes()"
+             (ngModelChange)="dev.setCustomFlash($event)">
+
+      <input type="number" class="form-control form-control-sm w-auto"
+             placeholder="RAM (B)"
+             [disabled]="!dev.isCustom()"
+             [ngModel]="dev.ramBytes()"
+             (ngModelChange)="dev.setCustomRam($event)">
+
+      <!-- Bouton save (visible uniquement si Custom) -->
+      <button *ngIf="dev.isCustom()" class="btn btn-sm btn-success" (click)="saveCustom()" title="Enregistrer ce device">
+        💾
+      </button>
+    </div>
+
+    <!-- Fichier courant -->
+    <div class="text-light small ms-3">
+      <span class="me-2">Fichier:</span>
+      @if ((fileName$ | async); as f) { <span class="badge text-bg-info">{{ f }}</span> }
+      @else { <span class="badge text-bg-secondary">Aucun</span> }
+    </div>
   </div>
 </header>
 
