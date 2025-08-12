@@ -1,8 +1,9 @@
 // src/app/pages/devices/devices.component.ts
-import { Component, inject, signal } from '@angular/core';
+import {Component, ElementRef, inject, signal, ViewChild} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DeviceProfileService, DeviceProfile } from '../../shared/device-profile.service';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-devices',
@@ -12,7 +13,31 @@ import { DeviceProfileService, DeviceProfile } from '../../shared/device-profile
 })
 export class DevicesComponent {
   dev = inject(DeviceProfileService);
+  route = inject(ActivatedRoute);
   editing = signal<DeviceProfile | null>(null);
+
+  @ViewChild('nameInput') nameInput!: ElementRef<HTMLInputElement>; // 👈 pour focus
+
+  ngOnInit() {
+    this.route.queryParams.subscribe(params => {
+      if (params['mode'] === 'add') {
+        // Pré-remplissage
+        const flash = Number(params['flash']) || 0;
+        const ram = Number(params['ram']) || 0;
+
+        this.editing.set({
+          id: '',
+          flashBytes: flash,
+          ramBytes: ram
+        });
+
+        // Focus après un petit délai (pour que le DOM soit prêt)
+        setTimeout(() => {
+          this.nameInput?.nativeElement.focus();
+        }, 0);
+      }
+    });
+  }
 
   startAdd() {
     this.editing.set({ id: '', flashBytes: 0, ramBytes: 0 });
