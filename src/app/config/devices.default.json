@@ -1,5 +1,8 @@
 [
-  {  "id": "NXP S32K144",   "flashBytes": 512000,  "ramBytes": 64000 },
-  {  "id": "NXP S32K146",   "flashBytes": 1024000, "ramBytes": 131072 },
-  {  "id": "STM32F407VG",   "flashBytes": 1048576, "ramBytes": 196608 }
+  { "id": "NXP S32K116",  "flashBytes": 128000,   "ramBytes": 17000  },
+  { "id": "NXP S32K118",  "flashBytes": 256000,   "ramBytes": 25000  },
+  { "id": "NXP S32K142",  "flashBytes": 256000,   "ramBytes": 32000  },
+  { "id": "NXP S32K148",  "flashBytes": 2048000,  "ramBytes": 256000 },
+  { "id": "EFR32BG22",  "flashBytes": 512000,  "ramBytes": 32000  },
+  { "id": "EFR32BG27", "flashBytes": 768000,  "ramBytes": 64000 }
 ]
