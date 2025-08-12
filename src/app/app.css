@@ -48,3 +48,17 @@
 
 /* Lien actif un peu plus lisible */
 .nav-link.active { font-weight: 600; }
+
+/* tailles compactes pour le header */
+.header-select { width: 260px; max-width: 60vw; }
+.header-num    { width: 140px; }
+
+/* un po' responsive */
+@media (max-width: 992px) {
+  .header-select { width: 220px; }
+  .header-num    { width: 120px; }
+}
+@media (max-width: 576px) {
+  .header-select { width: 180px; }
+  .header-num    { width: 110px; }
+}

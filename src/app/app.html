@@ -1,45 +1,51 @@
 <!-- Header -->
-<header class="navbar navbar-dark bg-dark px-3 sticky-top d-flex justify-content-between align-items-center">
-  <div class="d-flex align-items-center gap-2">
-    <button class="btn btn-outline-light" (click)="sidebar.toggle()">☰</button>
-    <a class="navbar-brand fw-semibold mb-0" routerLink="/">Softcar Map Parser</a>
-  </div>
+<header class="navbar navbar-dark bg-dark sticky-top py-2">
+  <div class="container-fluid">
+    <div class="row align-items-center w-100 g-2">
 
-  <!-- Zone device + fichier courant -->
-  <div class="d-flex align-items-center gap-2">
-    <!-- Sélecteur de device -->
-    <div class="d-flex align-items-center gap-2">
-      <select class="form-select form-select-sm" style="min-width: 220px"
-              [ngModel]="dev.selectedId()"
-              (ngModelChange)="dev.selectDevice($event)">
-        <option *ngFor="let d of dev.profiles()" [ngValue]="d.id">{{ d.id }}</option>
-        <option [ngValue]="'Custom'">Custom</option>
-      </select>
+      <!-- Gauche -->
+      <div class="col-auto">
+        <button class="btn btn-outline-light" (click)="sidebar.toggle()">☰</button>
+      </div>
 
-      <!-- Inputs numériques (activés seulement en Custom) -->
-      <input type="number" class="form-control form-control-sm w-auto"
-             placeholder="Flash (B)"
-             [disabled]="!dev.isCustom()"
-             [ngModel]="dev.flashBytes()"
-             (ngModelChange)="dev.setCustomFlash($event)">
+      <!-- Centre -->
+      <div class="col text-center">
+        <div class="d-inline-flex flex-nowrap align-items-center gap-2 justify-content-center">
 
-      <input type="number" class="form-control form-control-sm w-auto"
-             placeholder="RAM (B)"
-             [disabled]="!dev.isCustom()"
-             [ngModel]="dev.ramBytes()"
-             (ngModelChange)="dev.setCustomRam($event)">
+          <select class="form-select form-select-sm header-select"
+                  [ngModel]="dev.selectedId()"
+                  (ngModelChange)="dev.selectDevice($event)">
+            <option *ngFor="let d of dev.profiles()" [ngValue]="d.id">{{ d.id }}</option>
+            <option [ngValue]="'Custom'">Custom</option>
+          </select>
 
-      <!-- Bouton save (visible uniquement si Custom) -->
-      <button *ngIf="dev.isCustom()" class="btn btn-sm btn-success" (click)="saveCustom()" title="Enregistrer ce device">
-        💾
-      </button>
-    </div>
+          <input type="number" class="form-control form-control-sm header-num"
+                 placeholder="Flash (B)"
+                 [disabled]="!dev.isCustom()"
+                 [ngModel]="dev.flashBytes()"
+                 (ngModelChange)="dev.setCustomFlash($event)">
 
-    <!-- Fichier courant -->
-    <div class="text-light small ms-3">
-      <span class="me-2">Fichier:</span>
-      @if ((fileName$ | async); as f) { <span class="badge text-bg-info">{{ f }}</span> }
-      @else { <span class="badge text-bg-secondary">Aucun</span> }
+          <input type="number" class="form-control form-control-sm header-num"
+                 placeholder="RAM (B)"
+                 [disabled]="!dev.isCustom()"
+                 [ngModel]="dev.ramBytes()"
+                 (ngModelChange)="dev.setCustomRam($event)">
+
+          <button *ngIf="dev.isCustom()" class="btn btn-sm btn-success"
+                  (click)="saveCustom()" title="Enregistrer ce device">
+            💾
+          </button>
+        </div>
+      </div>
+
+      <!-- Droite -->
+      <div class="col-auto text-end">
+        @if ((fileName$ | async); as f) {
+          <button class="btn btn-primary" (click)="openAndParse()">{{ f }}</button>
+        } @else {
+          <button class="btn btn-primary" (click)="openAndParse()">📂 Fichier</button>
+        }
+      </div>
     </div>
   </div>
 </header>
@@ -54,9 +60,6 @@
   <!-- Sidebar (desktop + mobile) -->
   <aside class="app-sidebar bg-light border-end">
     <ul class="nav nav-pills flex-column gap-1 p-3">
-      <li class="nav-item">
-        <a routerLink="/" routerLinkActive="active" class="nav-link" >🏠 Accueil</a>
-      </li>
       <li class="nav-item">
         <a routerLink="/resume" routerLinkActive="active" class="nav-link" >🧾 Résumé</a>
       </li>
