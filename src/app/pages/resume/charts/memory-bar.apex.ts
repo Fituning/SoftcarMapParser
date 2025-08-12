@@ -1,6 +1,16 @@
-import { Component, Input, OnChanges } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { NgApexchartsModule, ApexAxisChartSeries, ApexChart, ApexXAxis, ApexYAxis, ApexPlotOptions, ApexTooltip, ApexDataLabels } from 'ng-apexcharts';
+import {Component, Input, OnChanges} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {
+  ApexAxisChartSeries,
+  ApexChart,
+  ApexDataLabels,
+  ApexPlotOptions,
+  ApexTooltip,
+  ApexXAxis,
+  ApexYAxis,
+  NgApexchartsModule
+} from 'ng-apexcharts';
+import {MapEntry, MemoryType} from '../../../../types/map-types';
 
 @Component({
   standalone: true,
@@ -27,7 +37,7 @@ export class MemoryBarApex implements OnChanges {
   ngOnChanges() {
     const m = new Map<string, number>();
     for (const e of this.entries) {
-      const t = e.memory_region?.memory_type ?? 'UNKNOWN';
+      const t = e.memory_type ?? MemoryType.UNKNOWN;
       m.set(t, (m.get(t) ?? 0) + e.size);
     }
     this.xaxis = { categories: [...m.keys()] };

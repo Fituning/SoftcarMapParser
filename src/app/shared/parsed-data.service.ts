@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import {MapEntry} from '../../types/map-types';
 
 @Injectable({ providedIn: 'root' })
 export class ParsedDataService {

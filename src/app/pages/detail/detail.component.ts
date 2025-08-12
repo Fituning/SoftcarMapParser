@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ParsedDataService } from '../../shared/parsed-data.service';
 import { FileStateService } from '../../shared/file-state.service';
 import {FormsModule} from '@angular/forms';
+import {MapEntry} from '../../../types/map-types';
 
 @Component({
   standalone: true,

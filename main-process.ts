@@ -2,16 +2,7 @@
 import { app, BrowserWindow, ipcMain, dialog } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
-
-// ======== Types ========
-interface MemoryRegion {
-  name: string; origin: number; length: number; attributes: string; memory_type: string;
-}
-interface SymbolEntry { address: number; symbol: string; }
-interface MapEntry {
-  section_full: string; section: string; address: number; size: number; file: string;
-  symbols: SymbolEntry[]; memory_region?: MemoryRegion;
-}
+import {MapEntry, MemoryRegion, MemoryType, SymbolEntry} from './src/types/map-types';
 
 // ======== Parsing (TS port de ton Python) ========
 function parseSymbols(symbols_raw: string): SymbolEntry[] {
@@ -27,12 +18,12 @@ function parseSymbols(symbols_raw: string): SymbolEntry[] {
   return res;
 }
 
-function deduceMemoryType(attrs: string): string {
+function deduceMemoryType(attrs: string): MemoryType {
   const a = attrs.toLowerCase();
-  if (a === 'xr') return 'FLASH';
-  if (a === 'rw' || a === 'xrw') return 'RAM';
-  if (a === 'r') return 'ROM';
-  return 'UNKNOWN';
+  if (a === 'xr') return MemoryType.FLASH;
+  if (a === 'rw' || a === 'xrw') return MemoryType.RAM;
+  if (a === 'r') return MemoryType.ROM;
+  return MemoryType.UNKNOWN;
 }
 
 function parseMemoryConfigs(lines: string[]): MemoryRegion[] {
@@ -54,6 +45,18 @@ function parseMemoryConfigs(lines: string[]): MemoryRegion[] {
   return regions;
 }
 
+function mapMemoryType(section :String, memory_region?: MemoryRegion,): MemoryType {
+  if(section.toLowerCase().includes("debug")){
+    return MemoryType.DEBUG;
+  }else{
+    if (memory_region) {
+      return memory_region.memory_type;
+    }else {
+      return MemoryType.UNKNOWN;
+    }
+  }
+}
+
 function parseLine(line: string, memory_regions: MemoryRegion[]): MapEntry | null {
   const m = line.match(/\s*(\.\w+(?:\.\w+)*)\s+(0x[0-9a-fA-F]+)\s+(0x[0-9a-fA-F]+)\s+(.+)/);
   if (!m) return null;
@@ -68,6 +71,7 @@ function parseLine(line: string, memory_regions: MemoryRegion[]): MapEntry | nul
   const root_section = section_full.includes('.') ? `.${section_full.split('.')[1]}` : section_full;
   const address = parseInt(addressHex, 16);
   const size = parseInt(sizeHex, 16);
+  const memory_region = memory_regions.find(r => address >= r.origin && address < r.origin + r.length);
 
   return {
     section_full,
@@ -76,7 +80,8 @@ function parseLine(line: string, memory_regions: MemoryRegion[]): MapEntry | nul
     size,
     file: real_file,
     symbols: parseSymbols(symbols_raw),
-    memory_region: memory_regions.find(r => address >= r.origin && address < r.origin + r.length),
+    memory_region: memory_region,
+    memory_type: mapMemoryType(root_section, memory_region)
   };
 }
 

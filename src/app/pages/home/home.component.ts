@@ -5,6 +5,7 @@ import { ParsedDataService } from '../../shared/parsed-data.service';
 import {App} from '../../app';
 import {SidebarService} from '../../shared/sidebar.service';
 import {Router} from '@angular/router';
+import {MapEntry} from '../../../types/map-types';
 
 @Component({
   standalone: true,

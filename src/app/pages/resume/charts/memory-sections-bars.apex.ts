@@ -1,10 +1,17 @@
-import { Component, Input, OnChanges, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {Component, Input, OnChanges, signal} from '@angular/core';
+import {CommonModule} from '@angular/common';
 import {
-  NgApexchartsModule,
-  ApexAxisChartSeries, ApexChart, ApexPlotOptions, ApexDataLabels,
-  ApexTooltip, ApexXAxis, ApexYAxis, ApexGrid
+  ApexAxisChartSeries,
+  ApexChart,
+  ApexDataLabels,
+  ApexGrid,
+  ApexPlotOptions,
+  ApexTooltip,
+  ApexXAxis,
+  ApexYAxis,
+  NgApexchartsModule
 } from 'ng-apexcharts';
+import {MapEntry, MemoryType} from '../../../../types/map-types';
 
 type Row = { name: string; bytes: number; pct: number };
 
@@ -37,7 +44,7 @@ type Row = { name: string; bytes: number; pct: number };
 })
 export class MemorySectionsBarsApex implements OnChanges {
   @Input() entries: MapEntry[] = [];
-  @Input() memoryType: 'FLASH' | 'RAM' | 'ROM' | 'UNKNOWN' = 'FLASH';
+  @Input() memoryType: MemoryType = MemoryType.UNKNOWN;
   @Input() topN = 20;                     // combien de lignes max (le reste groupé “others”)
 
   // données pré-calculées pour légende et graphique
@@ -61,7 +68,7 @@ export class MemorySectionsBarsApex implements OnChanges {
   ngOnChanges() {
     // 1) agrège par section (exactement comme ton screen: .debug_info, .text, etc.)
     const mapSection = new Map<string, number>();
-    const filtered = this.entries.filter(e => (e.memory_region?.memory_type ?? 'UNKNOWN') === this.memoryType);
+    const filtered = this.entries.filter(e => (e.memory_type ?? MemoryType.UNKNOWN) === this.memoryType);
     for (const e of filtered) {
       mapSection.set(e.section, (mapSection.get(e.section) ?? 0) + e.size);
     }

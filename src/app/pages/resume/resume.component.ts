@@ -5,6 +5,7 @@ import { ParsedDataService } from '../../shared/parsed-data.service';
 import { SectionDonutApex } from './charts/section-donut.apex';
 import { MemoryBarApex } from './charts/memory-bar.apex';
 import {MemorySectionsBarsApex} from './charts/memory-sections-bars.apex';
+import {MemoryType} from '../../../types/map-types';
 
 @Component({
   standalone: true,
@@ -15,4 +16,5 @@ import {MemorySectionsBarsApex} from './charts/memory-sections-bars.apex';
 export class ResumeComponent {
   file$ = inject(FileStateService).fileName$;
   entries = inject(ParsedDataService).entries ?? []; // snapshot simple
+  protected readonly MemoryType = MemoryType;
 }

@@ -1,6 +1,7 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgApexchartsModule, ApexChart, ApexLegend, ApexResponsive, ApexNonAxisChartSeries, ApexTooltip, ApexDataLabels, ApexFill, ApexStroke } from 'ng-apexcharts';
+import {MapEntry} from '../../../../types/map-types';
 
 @Component({
   standalone: true,

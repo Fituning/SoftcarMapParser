@@ -4,13 +4,16 @@
 
   <div class="row">
     <div class="col-12 mb-3">
-      <w-memory-sections-bars [entries]="entries" memoryType="FLASH" [topN]="10" />
+      <w-memory-sections-bars [entries]="entries" [memoryType]="MemoryType.FLASH" [topN]="10" />
     </div>
     <div class="col-12 mb-3">
-      <w-memory-sections-bars [entries]="entries" memoryType="RAM" [topN]="25" />
+      <w-memory-sections-bars [entries]="entries" [memoryType]="MemoryType.RAM" [topN]="25" />
     </div>
     <div class="col-12 mb-3">
-      <w-memory-sections-bars [entries]="entries" memoryType="UNKNOWN" [topN]="25" />
+      <w-memory-sections-bars [entries]="entries" [memoryType]="MemoryType.UNKNOWN" [topN]="25" />
+    </div>
+    <div class="col-12 mb-3">
+      <w-memory-sections-bars [entries]="entries" [memoryType]="MemoryType.DEBUG" [topN]="25" />
     </div>
     <div class="col-12 col-lg-6 mb-3">
       <w-section-donut [entries]="entries" />
