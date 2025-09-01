@@ -43,37 +43,42 @@ export class App {
   }
 
   async openAndParse() {
-    // 1) Choix du fichier (via Electron)
     const filePath = await window.electronAPI.openMapDialog();
     if (!filePath) {
-      this.parseMsg.set('Action annulée.');
-      this.parseOk.set(false);
+      this.zone.run(() => {
+        this.parseMsg.set('Action annulée.');
+        this.parseOk.set(false);
+      });
       return;
     }
 
-    // 2) Parsing côté Node
     const res = await window.electronAPI.parseMapFile(filePath);
-    if ((res as any)?.error) {
-      this.parsedStore.clear();
-      this.fileState.setFileName(null);
-      this.parseOk.set(false);
-      this.parseMsg.set(`❌ Erreur parsing: ${(res as any).error}`);
-      return;
-    }
 
-    // 3) Stockage + feedback
-    const entries = res as MapEntry[];
-    this.parsedStore.setEntries(entries);
-    const onlyName = filePath.split(/[\\/]/).pop() || filePath;
-    this.fileState.setFileName(onlyName);
-    this.parseOk.set(true);
-    this.parseMsg.set(`✅ Parsing OK — ${entries.length} entrées`);
     this.zone.run(() => {
+      if ((res as any)?.error) {
+        this.parsedStore.clear();
+        this.fileState.setFileName(null);
+        this.parseOk.set(false);
+        this.parseMsg.set(`❌ Erreur parsing: ${(res as any).error}`);
+        return;
+      }
+
+      const entries = res as MapEntry[];
+
+      // ⬇️ parsedStore.entries est un SIGNAL → on lit avec ()
+      console.log('[parse] BEFORE =', this.parsedStore.entries().length);
       this.parsedStore.setEntries(entries);
+      console.log('[parse] AFTER  =', this.parsedStore.entries().length);
+
       const onlyName = filePath.split(/[\\/]/).pop() || filePath;
       this.fileState.setFileName(onlyName);
-    });
+      this.parseOk.set(true);
+      this.parseMsg.set(`✅ Parsing OK — ${entries.length} entrées`);
 
-    // this.router.navigate(['/resume']); // todo fix the unshowed value at first loading
+      // Navigation optionnelle: si t’es déjà sur /resume, inutile
+      if (this.router.url !== '/resume') {
+        this.router.navigate(['/resume']);
+      }
+    });
   }
 }

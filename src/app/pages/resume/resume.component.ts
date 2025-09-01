@@ -14,7 +14,11 @@ import {MemoryType} from '../../../types/map-types';
   templateUrl: './resume.component.html',
 })
 export class ResumeComponent {
-  file$ = inject(FileStateService).fileName$;
-  entries = inject(ParsedDataService).entries ?? []; // snapshot simple
-  protected readonly MemoryType = MemoryType;
+  file$   = inject(FileStateService).fileName$;
+
+  // 👇 IMPORTANT : on garde le signal, pas de "?? []"
+  parsed  = inject(ParsedDataService);
+  entries = this.parsed.entries;               // Signal<MapEntry[]>
+
+  protected readonly MemoryType: typeof MemoryType = MemoryType;
 }

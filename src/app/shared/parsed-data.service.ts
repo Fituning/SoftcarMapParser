@@ -1,16 +1,19 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import {Injectable, signal} from '@angular/core';
 import {MapEntry} from '../../types/map-types';
 
 @Injectable({ providedIn: 'root' })
 export class ParsedDataService {
-  private _entries = new BehaviorSubject<MapEntry[] | null>(null);
-  entries$ = this._entries.asObservable();
+  // état interne
+  private _entries = signal<MapEntry[]>([]);
 
-  setEntries(e: MapEntry[] | null) { this._entries.next(e); }
-  get entries(): MapEntry[] | null { return this._entries.value; }
+  // lecture publique (signal en readonly)
+  public readonly entries = this._entries.asReadonly();
 
-  get count(): number { return this._entries.value?.length ?? 0; }
+  setEntries(e: MapEntry[]) {
+    this._entries.set(Array.isArray(e) ? e : []);
+  }
 
-  clear() { this._entries.next(null); }
+  clear() {
+    this._entries.set([]);
+  }
 }

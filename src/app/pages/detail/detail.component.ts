@@ -26,7 +26,7 @@ export class DetailComponent {
   filterType = signal<string | null>(null);
 
   // entries brutes
-  entriesSig = signal<MapEntry[] | null>(this.parsed.entries);
+  entriesSig = signal<MapEntry[] | null>(this.parsed.entries());
 
   // computed pour pagination
   total = computed(() => this.entriesSig()?.length ?? 0);
