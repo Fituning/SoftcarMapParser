@@ -69,7 +69,7 @@
 
 <!-- Table -->
 <div class="table-responsive">
-  <table class="table table-sm table-hover align-middle">
+  <table class="table table-sm table-hover align-middle table-striped">
     <thead class="table-light">
     <tr>
       <th>Section</th>
@@ -82,14 +82,15 @@
 
     @if (paged().length > 0) {
       <tbody>
-      <tr *ngFor="let e of paged(); trackBy: trackRow">
-        <td><code>{{ e.section_full }}</code></td>
-        <td><code>{{ hex(e.address) }}</code></td>
-        <td>{{ bytes(e.size) }}</td>
-        <td><span class="badge text-bg-secondary">{{ e.memory_type || '—' }}</span></td>
-        <td class="text-truncate" style="max-width: 360px;" title="{{ e.file }}">{{ e.file }}</td>
-      </tr>
-      </tbody>
+        @for (e of paged(); track trackRow){
+          <tr>
+            <td class="text-truncate" style="width: 20vw; max-width: 25vw;" title="{{ e.section_full }}">{{ e.section_full }}</td>
+            <td><code>{{ hex(e.address) }}</code></td>
+            <td>{{ bytes(e.size) }}</td>
+            <td><span class="badge text-bg-secondary">{{ e.memory_type || '—' }}</span></td>
+            <td class="text-truncate" style="width: 20vw; max-width: 25vw;" title="{{ e.file }}">{{ e.file }}</td>
+          </tr>
+        }
     } @else {
       <tbody>
       <tr>
