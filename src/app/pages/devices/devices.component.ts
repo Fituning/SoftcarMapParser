@@ -4,17 +4,22 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DeviceProfileService, DeviceProfile } from '../../shared/device-profile.service';
 import {ActivatedRoute} from '@angular/router';
+import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import {faPenToSquare,faTrashCan} from '@fortawesome/free-regular-svg-icons'
 
 @Component({
   selector: 'app-devices',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, FontAwesomeModule],
   templateUrl: './devices.component.html'
 })
 export class DevicesComponent {
   dev = inject(DeviceProfileService);
   route = inject(ActivatedRoute);
   editing = signal<DeviceProfile | null>(null);
+
+  faPenToSquare =faPenToSquare
+  faTrashCan = faTrashCan
 
   @ViewChild('nameInput') nameInput!: ElementRef<HTMLInputElement>; // 👈 pour focus
 

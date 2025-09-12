@@ -70,9 +70,11 @@
           <td>{{ d.ramBytes | number }} B</td>
           <td class="text-center">
             <button class="btn btn-sm btn-success me-1" (click)="edit(d)">
+              <fa-icon [icon]="faPenToSquare"></fa-icon>
               <i class="bi bi-pencil-square"></i>
             </button>
             <button class="btn btn-sm btn-danger" (click)="delete(d.id)">
+              <fa-icon [icon]="faTrashCan"></fa-icon>
               <i class="bi bi-trash"></i>
             </button>
           </td>
