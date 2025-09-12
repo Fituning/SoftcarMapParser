@@ -1,0 +1,22 @@
+
+th {
+  vertical-align: middle; // 💡 Centrage vertical
+  horizontal-align:middle;
+  width: 5vw;
+  max-width: 20vw ;
+  text-align: center;     // 💡 Centrage horizontal (optionnel)
+  /*padding: 8px;           // (optionnel) un peu d'air autour*/
+}
+
+.sortable-header {
+  cursor: pointer;              // curseur en forme de main
+transition: background-color 0.2s ease-in-out;
+
+  &:hover {
+    background-color: #f0f0f0;  // gris clair au survol
+  }
+
+  &:active {
+    background-color: #e0e0e0;  // clic maintenu
+  }
+}
