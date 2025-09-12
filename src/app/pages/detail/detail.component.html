@@ -92,7 +92,7 @@
 
     @if (paged().length > 0) {
       <tbody>
-        @for (e of paged(); track trackRow){
+        @for (e of paged(); track trackRow($index, e)){
           <tr (click)="openModal(e)"  data-bs-toggle="modal" data-bs-target="#sectionDetailModal" [attr.data-bs-whatever]="e">
             <td class="text-truncate" style="width: 25vw; max-width: 25vw;" title="{{ e.section_full }}">{{ e.section_full }}</td>
             <td><code>{{ hex(e.address) }}</code></td>
@@ -155,8 +155,8 @@
         <p><strong>Section :</strong> {{ selectedEntry.section }}</p>
         <p><strong>Adresse :</strong> {{ hex(selectedEntry.address) }}</p>
         <p><strong>Taille :</strong> {{ bytes(selectedEntry.size) }}</p>
-        <p><strong>Mémoire :</strong> {{ selectedEntry?.memory_type || '—' }}</p>
-        <p><strong>Fichier :</strong> {{ selectedEntry?.file }}</p>
+        <p><strong>Mémoire :</strong> {{ selectedEntry.memory_type }}</p>
+        <p><strong>Fichier :</strong> {{ selectedEntry.file }}</p>
       </div>
     </div>
   </div>
