@@ -149,6 +149,12 @@ export class DetailComponent {
     return `${(n/1024/1024).toFixed(2)} MB`;
   }
 
+  selectedEntry: MapEntry = this.paged()[0];
+
+  openModal(entry: MapEntry) {
+    this.selectedEntry = entry;
+  }
+
   // trackBy pour perf
   trackRow = (_: number, e: MapEntry) => e.address ^ e.size; // clé simple
 }
