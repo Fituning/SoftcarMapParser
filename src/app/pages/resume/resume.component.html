@@ -3,6 +3,12 @@
 @if (file$ | async; as file) {
 
   <div class="row">
+    <div class="col-12 col-lg-6 mb-3">
+      <w-device-memory-fill [entries]="entries()" />
+    </div>
+    <div class="col-12 col-lg-6 mb-3">
+      <w-memory-bar [entries]="entries()" />
+    </div>
     <div class="col-12 mb-3">
       <w-memory-sections-bars [entries]="entries()" [memoryType]="MemoryType.FLASH" [topN]="10" />
     </div>
@@ -10,16 +16,7 @@
       <w-memory-sections-bars [entries]="entries()" [memoryType]="MemoryType.RAM" [topN]="25" />
     </div>
     <div class="col-12 mb-3">
-      <w-memory-sections-bars [entries]="entries()" [memoryType]="MemoryType.UNKNOWN" [topN]="25" />
-    </div>
-    <div class="col-12 mb-3">
       <w-memory-sections-bars [entries]="entries()" [memoryType]="MemoryType.DEBUG" [topN]="25" />
-    </div>
-    <div class="col-12 col-lg-6 mb-3">
-      <w-section-donut [entries]="entries()" />
-    </div>
-    <div class="col-12 col-lg-6 mb-3">
-      <w-memory-bar [entries]="entries()" />
     </div>
   </div>
 } @else {

@@ -1,6 +1,7 @@
 // src/app/shared/device-profile.service.ts
 import { Injectable, signal, computed } from '@angular/core';
 import devicesJson from '../config/devices.default.json';
+import {toObservable} from '@angular/core/rxjs-interop';
 
 export interface DeviceProfile {
   id: string;
@@ -25,6 +26,8 @@ export class DeviceProfileService {
   selectedProfile = computed<DeviceProfile | null>(() =>
     this.isCustom() ? null : this._profiles().find(p => p.id === this._selectedId()) ?? null
   );
+
+  selectedProfile$ = toObservable(this.selectedProfile);
 
   flashBytes = computed(() => this.isCustom() ? this._customFlash() : (this.selectedProfile()?.flashBytes ?? 0));
   ramBytes   = computed(() => this.isCustom() ? this._customRam()   : (this.selectedProfile()?.ramBytes   ?? 0));

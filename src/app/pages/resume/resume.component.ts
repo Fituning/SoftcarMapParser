@@ -2,15 +2,15 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FileStateService } from '../../shared/file-state.service';
 import { ParsedDataService } from '../../shared/parsed-data.service';
-import { SectionDonutApex } from './charts/section-donut.apex';
 import { MemoryBarApex } from './charts/memory-bar.apex';
 import {MemorySectionsBarsApex} from './charts/memory-sections-bars.apex';
 import {MemoryType} from '../../../types/map-types';
+import {DeviceMemoryFillApex} from './charts/device-memory-fill/device-memory-fill.apex';
 
 @Component({
   standalone: true,
   selector: 'app-resume',
-  imports: [CommonModule, SectionDonutApex, MemoryBarApex, MemorySectionsBarsApex],
+  imports: [CommonModule, MemoryBarApex, MemorySectionsBarsApex, DeviceMemoryFillApex],
   templateUrl: './resume.component.html',
 })
 export class ResumeComponent {
