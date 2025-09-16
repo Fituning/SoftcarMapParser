@@ -6,7 +6,7 @@ import {
   ApexPlotOptions,
   ApexTooltip,
   ApexXAxis,
-  ApexYAxis, ChartType,
+  ApexYAxis,
   NgApexchartsModule
 } from 'ng-apexcharts';
 import {MapEntry, MemoryType} from '../../../../../types/map-types';
@@ -63,7 +63,8 @@ export class DeviceMemoryFillApex implements OnChanges{
     }
   ]
 
-  public chartOptions: ChartOptions;
+  public flashChartOptions: ChartOptions;
+  public ramChartOptions: ChartOptions;
   private sub: any;
 
   ngOnInit() {
@@ -87,7 +88,8 @@ export class DeviceMemoryFillApex implements OnChanges{
     this.filteredFlash = this.groupBySection(flash, MemoryType.FLASH)
     this.filteredRam = this.groupBySection(ram, MemoryType.RAM)
 
-    this.chartOptions = this.createChart(this.filteredFlash, this.filteredRam)
+    this.flashChartOptions = this.createChart(this.filteredFlash ,MemoryType.FLASH)
+    this.ramChartOptions = this.createChart(this.filteredRam, MemoryType.RAM)
 
   }
 
@@ -100,7 +102,7 @@ export class DeviceMemoryFillApex implements OnChanges{
     const map = new Map(
       Array.from(mapSection).filter(([_, size]) => size > 0)
     );
-    const arr: Row[] = Array.from(map, ([name, data]) => ({
+    let arr: Row[] = Array.from(map, ([name, data]) => ({
       name,
       data: [ data]   // wrap le nombre dans un tableau
     }));
@@ -111,15 +113,22 @@ export class DeviceMemoryFillApex implements OnChanges{
         col.data[0] = Math.round((col.data[0] * 100 / this.device.ramBytes()) * 10) / 10;
       }
     }
+    console.log(arr)
+    arr = arr.filter(col => col.data[0] > 0);
+    console.log(arr)
     return arr
   }
 
-  createChart(entries: Row[], ram: Row[]) : ChartOptions  {
+  createChart(entries: Row[], name : string) : ChartOptions  {
+    const total = entries.reduce((acc, row) => acc + row.data[0], 0);
+    console.log(total)
+
+    const maxAxis = total > 100 ? total + total*0.1 : 100
     return {
       series: entries,
       chart: {
         type: "bar",
-        height: 400,
+        height: 170,
         stacked: true
       },
       plotOptions: {
@@ -132,10 +141,11 @@ export class DeviceMemoryFillApex implements OnChanges{
         colors: ["#fff"]
       },
       title: {
-        text: "Flash"
       },
       xaxis: {
-        categories: ["Flash","RAM"],
+        categories: [name],
+        min: 0,
+        max: maxAxis,
         labels: {
           formatter: function(val) {
             return val + "%";
@@ -158,15 +168,16 @@ export class DeviceMemoryFillApex implements OnChanges{
         opacity: 1
       },
       legend: {
-        position: "top",
+        position: "bottom",
         horizontalAlign: "left",
-        offsetX: 40
+        offsetX: 0
       },
       dataLabels : undefined
     };
   }
 
   constructor() {
-    this.chartOptions = this.createChart(this.filteredFlash ? this.filteredFlash : [],this.filteredRam ? this.filteredRam : [])
+    this.flashChartOptions = this.createChart(this.filteredFlash ? this.filteredFlash : [], MemoryType.FLASH)
+    this.ramChartOptions = this.createChart(this.filteredRam ? this.filteredRam : [], MemoryType.RAM)
   }
 }

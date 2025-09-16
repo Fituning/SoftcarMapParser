@@ -1,25 +1,26 @@
 <div id="chart">
+  <h6 class="fw-bold text-center">Flash/RAM consumption</h6>
   <apx-chart
-    [series]="chartOptions.series"
-    [chart]="chartOptions.chart"
-    [plotOptions]="chartOptions.plotOptions"
-    [xaxis]="chartOptions.xaxis"
-    [fill]="chartOptions.fill"
-    [yaxis]="chartOptions.yaxis"
-    [title]="chartOptions.title"
-    [tooltip]="chartOptions.tooltip"
-    [legend]="chartOptions.legend"
+    [series]="flashChartOptions.series"
+    [chart]="flashChartOptions.chart"
+    [plotOptions]="flashChartOptions.plotOptions"
+    [xaxis]="flashChartOptions.xaxis"
+    [fill]="flashChartOptions.fill"
+    [yaxis]="flashChartOptions.yaxis"
+    [title]="flashChartOptions.title"
+    [tooltip]="flashChartOptions.tooltip"
+    [legend]="flashChartOptions.legend"
   ></apx-chart>
 
-<!--  <apx-chart-->
-<!--    [series]="chartOptions.series"-->
-<!--    [chart]="chartOptions.chart"-->
-<!--    [plotOptions]="chartOptions.plotOptions"-->
-<!--    [xaxis]="chartOptions.xaxis"-->
-<!--    [fill]="chartOptions.fill"-->
-<!--    [yaxis]="chartOptions.yaxis"-->
-<!--    [title]="chartOptions.title"-->
-<!--    [tooltip]="chartOptions.tooltip"-->
-<!--    [legend]="chartOptions.legend"-->
-<!--  ></apx-chart>-->
+  <apx-chart
+    [series]="ramChartOptions.series"
+    [chart]="ramChartOptions.chart"
+    [plotOptions]="ramChartOptions.plotOptions"
+    [xaxis]="ramChartOptions.xaxis"
+    [fill]="ramChartOptions.fill"
+    [yaxis]="ramChartOptions.yaxis"
+    [title]="ramChartOptions.title"
+    [tooltip]="ramChartOptions.tooltip"
+    [legend]="ramChartOptions.legend"
+  ></apx-chart>
 </div>
