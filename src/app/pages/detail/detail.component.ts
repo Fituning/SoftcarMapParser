@@ -1,4 +1,4 @@
-import {Component, computed, inject, Signal, signal} from '@angular/core';
+import {Component, computed, inject, Signal, signal, WritableSignal} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ParsedDataService } from '../../shared/parsed-data.service';
 import { FileStateService } from '../../shared/file-state.service';
@@ -6,15 +6,8 @@ import {FormsModule} from '@angular/forms';
 import {MapEntry} from '../../../types/map-types';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {faSquareCaretDown, faSquareCaretUp, faSquare} from '@fortawesome/free-regular-svg-icons'
-import {faArrowDown, faArrowUp} from '@fortawesome/free-solid-svg-icons'
+import {NgMultiSelectDropDownModule} from 'ng-multiselect-dropdown';
 
-function computePagination(entries: () => MapEntry[] | null, page: () => number, pageSize: () => number){
-  return computed(() => {
-    const data = entries() ?? [];
-    const start = (page() - 1) * pageSize();
-    return data.slice(start, start + pageSize());
-  });
-}
 
 type MapEntryKey = 'section_full'| 'section'| 'address'| 'size'| 'file'| 'symbols'| 'memory_region'| 'memory_type'
 
@@ -24,7 +17,7 @@ type SortDirection = 'asc' | 'dsc' | null;
 @Component({
   standalone: true,
   selector: 'app-detail',
-  imports: [CommonModule, FormsModule, FontAwesomeModule],
+  imports: [CommonModule, FormsModule, FontAwesomeModule, NgMultiSelectDropDownModule],
   templateUrl: './detail.component.html',
   styleUrls: ['./detail.component.css'],
 })
@@ -38,16 +31,26 @@ export class DetailComponent {
 
   // filters (signals)
   filterText = signal('');
-  filterSection = signal<string | null>(null);
+  filterSections = signal<Set<string>>(new Set());
   filterType = signal<string | null>(null);
 
   // entries brutes
-  entriesSig = signal<MapEntry[] | null>(this.parsed.entries());
+  rawEntries = signal<MapEntry[]>(this.parsed.entries());
+  entriesSig: Signal<MapEntry[]> = this.rawEntries;
+
+
+  selectedSections = signal<string[]>([]);
+  filteredEntries = computed(() => {
+    const entries = this.entriesSig() ?? [];
+    const selected = this.selectedSections();
+    if (selected.length === 0) return entries;
+    return entries.filter(e => selected.includes(e.section));
+  });
 
   // computed pour pagination
-  total = computed(() => this.entriesSig()?.length ?? 0)
+  total = computed(() => this.filteredEntries()?.length ?? 0)
   totalPages = computed(() => Math.max(1, Math.ceil(this.total() / this.pageSize())));
-  paged  = computePagination(this.entriesSig,this.page, this.pageSize)
+  paged  = this.computePagination(this.filteredEntries)
 
   sortStates: Map<MapEntryKey, SortDirection> = new Map([
     ['section_full', null],
@@ -60,62 +63,58 @@ export class DetailComponent {
     ['memory_type', null],
   ]);
 
+  sections = computed(() => {
+    const entries = this.entriesSig() ?? [];
+    const unique = new Set(entries.map(e => e.section));
+    return Array.from(unique).sort();
+  });
 
 
-  sortBy(col: MapEntryKey){
-    let sortedEntries
 
-    if(this.sortStates.get(col) == 'asc'){
-      this.sortStates.set(col, 'dsc')
-    }else if(this.sortStates.get(col) == 'dsc'){
-      this.sortStates.set(col, null)
-    }else{
-      this.resetSortStates()
-      this.sortStates.set(col, 'asc')
+  dropdownSettings = {
+    singleSelection: false,
+    text: "Sélectionner sections",
+    selectAllText: "Tout sélectionner",
+    unSelectAllText: "Tout désélectionner",
+    enableSearchFilter: true,
+    itemsShowLimit: 2 // 👈 n’affiche que 2 valeurs sélectionnées
+  };
+
+  computeEntries(){
+    let computedEntries : Signal<MapEntry[]> = this.rawEntries
+    //   Partie qui filtre les datas
+
+    //   La partie qui trie les datas
+
+    console.log(computedEntries())
+    computedEntries = this.sortEntries(computedEntries)
+    console.log(computedEntries())
+
+    this.paged  = this.computePagination(computedEntries)
+  }
+
+  getSortState(): { col: MapEntryKey; dir: "asc" | "dsc"; } | null {
+    for (const [col, dir] of this.sortStates) {
+      if (dir === "asc" || dir === 'dsc') {
+        return { col, dir };
+      }
+    }
+    return null;
+  }
+
+  sortTrigger(col: MapEntryKey){
+    if (this.sortStates.get(col) === 'asc') {
+      this.sortStates.set(col, 'dsc');
+    } else if (this.sortStates.get(col) === 'dsc') {
+      this.sortStates.set(col, null);
+    } else {
+      this.resetSortStates();
+      this.sortStates.set(col, 'asc');
     }
 
-    switch (col) {
-      case 'section_full':
-        sortedEntries = [...this.parsed.entries()].sort((a, b) => {
-          const res = a.section_full.localeCompare(b.section_full);
-          return this.sortStates.get(col) === 'asc' ? res : -res;
-        });
-        break
-      case 'address':
-        sortedEntries = [...this.parsed.entries()].sort((a, b) => {
-          const res = a.address - b.address;
-          return this.sortStates.get(col) === 'asc' ? res : -res;
-        });
-        break
-      case 'size':
-        sortedEntries = [...this.parsed.entries()].sort((a, b) => {
-          const res = a.size - b.size
-          return this.sortStates.get(col) === 'asc' ? res : -res;
-        });
-        break
-      case 'memory_type':
-        sortedEntries = [...this.parsed.entries()].sort((a, b) => {
-          const res = a.memory_type.localeCompare(b.memory_type);
-          return this.sortStates.get(col) === 'asc' ? res : -res;
-        });
-        break
-      case 'file':
-        sortedEntries = [...this.parsed.entries()].sort((a, b) => {
-          const res = a.file.localeCompare(b.file);
-          return this.sortStates.get(col) === 'asc' ? res : -res;
-        });
-        break
-      default:
-        sortedEntries = [...this.parsed.entries()].sort((a, b) => {
-          const res = a.section_full.localeCompare(b.section_full);
-          return this.sortStates.get(col) === 'asc' ? res : -res;
-        });
-        break
-    }
+    console.log(col)
 
-    this.entriesSig = signal<MapEntry[] | null>(sortedEntries);
-
-    this.paged  = computePagination(this.entriesSig,this.page, this.pageSize)
+    this.computeEntries();
   }
 
   resetSortStates() {
@@ -123,6 +122,59 @@ export class DetailComponent {
       this.sortStates.set(key, null);
     }
   }
+
+  sortEntries( entries : Signal<MapEntry[]>) : Signal<MapEntry[]>{
+    let sortedEntries
+    const state = this.getSortState()
+
+    console.log(state)
+
+    if (!state) return entries
+
+    switch (state?.col) {
+      case 'section_full':
+        sortedEntries = [...entries()].sort((a, b) => {
+          const res = a.section_full.localeCompare(b.section_full);
+          console.log("in")
+          return state?.dir === 'asc' ? res : -res;
+        });
+        break
+      case 'address':
+        sortedEntries = [...entries()].sort((a, b) => {
+          const res = a.address - b.address;
+          return state?.dir === 'asc' ? res : -res;
+        });
+        break
+      case 'size':
+        sortedEntries = [...entries()].sort((a, b) => {
+          const res = a.size - b.size
+          return state?.dir === 'asc' ? res : -res;
+        });
+        break
+      case 'memory_type':
+        sortedEntries = [...entries()].sort((a, b) => {
+          const res = a.memory_type.localeCompare(b.memory_type);
+          return state?.dir === 'asc' ? res : -res;
+        });
+        break
+      case 'file':
+        sortedEntries = [...entries()].sort((a, b) => {
+          const res = a.file.localeCompare(b.file);
+          return state?.dir === 'asc' ? res : -res;
+        });
+        break
+      default:
+        sortedEntries = [...entries()].sort((a, b) => {
+          const res = a.section_full.localeCompare(b.section_full);
+          return state?.dir === 'asc' ? res : -res;
+        });
+        break
+    }
+
+    return signal<MapEntry[]>(sortedEntries)
+  }
+
+
 
   getSortIcon(col: MapEntryKey) {
     const dir = this.sortStates.get(col);
@@ -153,6 +205,14 @@ export class DetailComponent {
 
   openModal(entry: MapEntry) {
     this.selectedEntry = entry;
+  }
+
+  computePagination(entries: () => MapEntry[] | null){
+    return computed(() => {
+      const data = entries() ?? [];
+      const start = (this.page() - 1) * this.pageSize();
+      return data.slice(start, start + this.pageSize());
+    });
   }
 
   // trackBy pour perf

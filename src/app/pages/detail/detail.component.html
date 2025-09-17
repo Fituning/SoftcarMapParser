@@ -21,13 +21,13 @@
               <!-- désactivé pour l’instant -->
             </div>
             <div class="col-6 col-md-3">
-              <label class="form-label">Section</label>
-              <select class="form-select" [value]="(filterSection())" disabled> <!-- todo <select class="form-select" [(ngModel)]="(filterSection())" disabled>   -->
-                <option [ngValue]="null">Toutes</option>
-                <option value=".text">.text</option>
-                <option value=".data">.data</option>
-                <option value=".bss">.bss</option>
-              </select>
+              <label for="sections" class="form-label">Sections</label>
+              <ng-multiselect-dropdown
+                [data]="sections()"
+                [(ngModel)]="selectedSections"
+                (ngModelChange)="selectedSections.set($event)"
+                [settings]="dropdownSettings">
+              </ng-multiselect-dropdown>
             </div>
             <div class="col-6 col-md-3">
               <label class="form-label">Type mémoire</label>
@@ -43,7 +43,6 @@
               <button class="btn btn-outline-secondary w-100" disabled>Appliquer</button>
             </div>
           </div>
-          <div class="form-text mt-2">Les filtres sont placeholders. On les rendra actifs après validation du flux 👌</div>
         </div>
       </div>
     </div>
@@ -72,19 +71,19 @@
   <table class="table table-sm table-hover align-middle table-striped">
     <thead class="table-light">
     <tr>
-      <th class="sortable-header" (click)="sortBy('section_full')">
+      <th class="sortable-header" (click)="sortTrigger('section_full')">
         Section <fa-icon [icon]="getSortIcon('section_full')"></fa-icon>
       </th>
-      <th class="sortable-header" (click)="sortBy('address')">
+      <th class="sortable-header" (click)="sortTrigger('address')">
         Adress <fa-icon [icon]="getSortIcon('address')"></fa-icon>
       </th>
-      <th class="sortable-header" (click)="sortBy('size')">
+      <th class="sortable-header" (click)="sortTrigger('size')">
         Size <fa-icon [icon]="getSortIcon('size')"></fa-icon>
       </th>
-      <th class="sortable-header" (click)="sortBy('memory_type')">
+      <th class="sortable-header" (click)="sortTrigger('memory_type')">
         Type <fa-icon [icon]="getSortIcon('memory_type')"></fa-icon>
       </th>
-      <th class="sortable-header" (click)="sortBy('file')">
+      <th class="sortable-header" (click)="sortTrigger('file')">
         Source File<fa-icon [icon]="getSortIcon('file')"></fa-icon>
       </th>
     </tr>
