@@ -10,7 +10,28 @@
     "test": "ng test",
     "build:ng": "ng build --base-href ./",
     "build:electron": "tsc main-process.ts preload.ts",
-    "start-electron": "npm run build:ng && npm run build:electron && electron ."
+    "start-electron": "npm run build:ng && npm run build:electron && electron .",
+
+    "dist:win": "npm run build:ng && npm run build:electron && electron-builder --win nsis",
+    "dist:mac": "npm run build:ng && npm run build:electron && electron-builder --mac dmg",
+    "dist:all": "npm run build:ng && npm run build:electron && electron-builder -mwl"
+  },
+  "build": {
+    "appId": "com.softcar.mapparser",
+    "productName": "Softcar Map Parser",
+    "files": [
+      "dist/**/*",
+      "main-process.js",
+      "preload.js"
+    ],
+    "win": {
+      "target": "nsis",
+      "artifactName": "MapParser-Setup-${version}.exe"
+    },
+    "mac": {
+      "target": "dmg",
+      "artifactName": "MapParser-${version}.dmg"
+    }
   },
   "prettier": {
     "overrides": [

@@ -1,0 +1,106 @@
+name: Build & Release MapParser
+
+on:
+  push:
+    branches: [ main, ci-test ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Angular
+        run: npm run build:ng
+
+      - name: Build Electron main process
+        run: npm run build:electron
+
+      - name: Package Windows app
+        run: npx electron-builder --win nsis
+
+      - name: Upload Windows artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: MapParser-Windows
+          path: dist/*.exe
+
+  build-mac:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Angular
+        run: npm run build:ng
+
+      - name: Build Electron main process
+        run: npm run build:electron
+
+      - name: Package Mac app
+        run: npx electron-builder --mac dmg
+
+      - name: Upload Mac artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: MapParser-Mac
+          path: dist/*.dmg
+
+  release:
+    needs: [ build-windows, build-mac ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Download Windows artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: MapParser-Windows
+          path: ./release-assets/
+
+      - name: Download Mac artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: MapParser-Mac
+          path: ./release-assets/
+
+      - name: List downloaded artifacts
+        run: ls -l ./release-assets/
+
+      - name: Generate tag name
+        id: tag
+        run: echo "TAG=$(date +'%y.%m.%d').${{ github.run_number }}" >> $GITHUB_ENV
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: "v${{ env.TAG }}"
+          name: "Release v${{ env.TAG }}"
+          files: ./release-assets/*
