@@ -1,4 +1,4 @@
-import {Component, computed, inject, Signal, signal, WritableSignal} from '@angular/core';
+import {Component, computed, effect, inject, Signal, signal, WritableSignal} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ParsedDataService } from '../../shared/parsed-data.service';
 import { FileStateService } from '../../shared/file-state.service';
@@ -10,7 +10,6 @@ import {NgMultiSelectDropDownModule} from 'ng-multiselect-dropdown';
 
 
 type MapEntryKey = 'section_full'| 'section'| 'address'| 'size'| 'file'| 'symbols'| 'memory_region'| 'memory_type'
-
 type SortDirection = 'asc' | 'dsc' | null;
 
 
@@ -29,28 +28,13 @@ export class DetailComponent {
   pageSize = signal(25);
   page = signal(1);
 
-  // filters (signals)
-  filterText = signal('');
-  filterSections = signal<Set<string>>(new Set());
-  filterType = signal<string | null>(null);
-
   // entries brutes
   rawEntries = signal<MapEntry[]>(this.parsed.entries());
-  entriesSig: Signal<MapEntry[]> = this.rawEntries;
-
-
-  selectedSections = signal<string[]>([]);
-  filteredEntries = computed(() => {
-    const entries = this.entriesSig() ?? [];
-    const selected = this.selectedSections();
-    if (selected.length === 0) return entries;
-    return entries.filter(e => selected.includes(e.section));
-  });
 
   // computed pour pagination
-  total = computed(() => this.filteredEntries()?.length ?? 0)
-  totalPages = computed(() => Math.max(1, Math.ceil(this.total() / this.pageSize())));
-  paged  = this.computePagination(this.filteredEntries)
+  total = this.rawEntries()?.length ?? 0
+  totalPages = Math.max(1, Math.ceil(this.total / this.pageSize()))
+  paged = this.rawEntries().slice((this.page() - 1) * this.pageSize(), (this.page() - 1) * this.pageSize() + this.pageSize())
 
   sortStates: Map<MapEntryKey, SortDirection> = new Map([
     ['section_full', null],
@@ -63,11 +47,31 @@ export class DetailComponent {
     ['memory_type', null],
   ]);
 
+
+  // filters (signals)
   sections = computed(() => {
-    const entries = this.entriesSig() ?? [];
+    const entries = this.rawEntries() ?? [];
     const unique = new Set(entries.map(e => e.section));
     return Array.from(unique).sort();
   });
+  selectedSections = signal<string[]>([]);
+
+  memoryType = computed(() => {
+    const entries = this.rawEntries() ?? [];
+    const unique = new Set(entries.map(e => e.memory_type));
+    return Array.from(unique).sort();
+  });
+  selectedMemoryTypes = signal<string[]>([]);
+
+
+  constructor() {
+    effect(() => {
+      const sections = this.selectedSections();
+      const memoryType = this.selectedMemoryTypes();
+      // chaque fois qu'un signal au dessus change, ce bloc est relancé
+      this.computeEntries();
+    });
+  }
 
 
 
@@ -81,16 +85,18 @@ export class DetailComponent {
   };
 
   computeEntries(){
-    let computedEntries : Signal<MapEntry[]> = this.rawEntries
+    let computedEntries : MapEntry[] = this.rawEntries()
+
     //   Partie qui filtre les datas
+    if (this.selectedSections().length !== 0) computedEntries = computedEntries.filter(e => this.selectedSections().includes(e.section))
+    if (this.selectedMemoryTypes().length !== 0) computedEntries = computedEntries.filter(e => this.selectedMemoryTypes().includes(e.memory_type))
+
 
     //   La partie qui trie les datas
-
-    console.log(computedEntries())
     computedEntries = this.sortEntries(computedEntries)
-    console.log(computedEntries())
 
-    this.paged  = this.computePagination(computedEntries)
+    // update this.paged so the view gets refreshed
+    this.computePagination(computedEntries)
   }
 
   getSortState(): { col: MapEntryKey; dir: "asc" | "dsc"; } | null {
@@ -112,8 +118,6 @@ export class DetailComponent {
       this.sortStates.set(col, 'asc');
     }
 
-    console.log(col)
-
     this.computeEntries();
   }
 
@@ -123,55 +127,52 @@ export class DetailComponent {
     }
   }
 
-  sortEntries( entries : Signal<MapEntry[]>) : Signal<MapEntry[]>{
+  sortEntries( entries : MapEntry[]) : MapEntry[]{
     let sortedEntries
     const state = this.getSortState()
-
-    console.log(state)
 
     if (!state) return entries
 
     switch (state?.col) {
       case 'section_full':
-        sortedEntries = [...entries()].sort((a, b) => {
+        sortedEntries = [...entries].sort((a, b) => {
           const res = a.section_full.localeCompare(b.section_full);
-          console.log("in")
           return state?.dir === 'asc' ? res : -res;
         });
         break
       case 'address':
-        sortedEntries = [...entries()].sort((a, b) => {
+        sortedEntries = [...entries].sort((a, b) => {
           const res = a.address - b.address;
           return state?.dir === 'asc' ? res : -res;
         });
         break
       case 'size':
-        sortedEntries = [...entries()].sort((a, b) => {
+        sortedEntries = [...entries].sort((a, b) => {
           const res = a.size - b.size
           return state?.dir === 'asc' ? res : -res;
         });
         break
       case 'memory_type':
-        sortedEntries = [...entries()].sort((a, b) => {
+        sortedEntries = [...entries].sort((a, b) => {
           const res = a.memory_type.localeCompare(b.memory_type);
           return state?.dir === 'asc' ? res : -res;
         });
         break
       case 'file':
-        sortedEntries = [...entries()].sort((a, b) => {
+        sortedEntries = [...entries].sort((a, b) => {
           const res = a.file.localeCompare(b.file);
           return state?.dir === 'asc' ? res : -res;
         });
         break
       default:
-        sortedEntries = [...entries()].sort((a, b) => {
+        sortedEntries = [...entries].sort((a, b) => {
           const res = a.section_full.localeCompare(b.section_full);
           return state?.dir === 'asc' ? res : -res;
         });
         break
     }
 
-    return signal<MapEntry[]>(sortedEntries)
+    return sortedEntries
   }
 
 
@@ -189,7 +190,7 @@ export class DetailComponent {
 
   // actions pager
   setPageSize(sz: number) { this.pageSize.set(sz); this.page.set(1); }
-  goto(p: number) { if (p >= 1 && p <= this.totalPages()) this.page.set(p); }
+  goto(p: number) { if (p >= 1 && p <= this.totalPages) this.page.set(p); }
   prev() { this.goto(this.page() - 1); }
   next() { this.goto(this.page() + 1); }
 
@@ -201,18 +202,18 @@ export class DetailComponent {
     return `${(n/1024/1024).toFixed(2)} MB`;
   }
 
-  selectedEntry: MapEntry = this.paged()[0];
+  selectedModalEntry: MapEntry = this.paged[0];
 
   openModal(entry: MapEntry) {
-    this.selectedEntry = entry;
+    this.selectedModalEntry = entry;
   }
 
-  computePagination(entries: () => MapEntry[] | null){
-    return computed(() => {
-      const data = entries() ?? [];
-      const start = (this.page() - 1) * this.pageSize();
-      return data.slice(start, start + this.pageSize());
-    });
+  computePagination(entries: MapEntry[] | null){
+    this.total = entries?.length ?? 0
+    this.totalPages = Math.max(1, Math.ceil(this.total / this.pageSize()))
+    const data = entries ?? [];
+    const start = (this.page() - 1) * this.pageSize();
+    this.paged = data.slice(start, start + this.pageSize())
   }
 
   // trackBy pour perf

@@ -31,17 +31,17 @@
             </div>
             <div class="col-6 col-md-3">
               <label class="form-label">Type mémoire</label>
-              <select class="form-select" [value]="(filterType())" disabled> <!-- todo <select class="form-select" [(ngModel)]="(filterType())" disabled> -->
-                <option [ngValue]="null">Tous</option>
-                <option value="FLASH">FLASH</option>
-                <option value="RAM">RAM</option>
-                <option value="ROM">ROM</option>
-              </select>
+              <ng-multiselect-dropdown
+                [data]="memoryType()"
+                [(ngModel)]="selectedMemoryTypes"
+                (ngModelChange)="selectedMemoryTypes.set($event)"
+                [settings]="dropdownSettings">
+              </ng-multiselect-dropdown>
             </div>
-            <div class="col-12 col-md-2 text-md-end">
-              <label class="form-label d-none d-md-block">&nbsp;</label>
-              <button class="btn btn-outline-secondary w-100" disabled>Appliquer</button>
-            </div>
+<!--            <div class="col-12 col-md-2 text-md-end">-->
+<!--              <label class="form-label d-none d-md-block">&nbsp;</label>-->
+<!--              <button class="btn btn-outline-secondary w-100" disabled>Appliquer</button>-->
+<!--            </div>-->
           </div>
         </div>
       </div>
@@ -52,7 +52,7 @@
 
 <!-- Résumé + page size -->
 <div class="d-flex justify-content-between align-items-center mb-2">
-  <div class="text-muted small">Total: <strong>{{ total() }}</strong> entrées</div>
+  <div class="text-muted small">Total: <strong>{{ total }}</strong> entrées</div>
   <div class="d-flex align-items-center gap-2">
     <span class="small">Lignes/page</span>
     <select class="form-select form-select-sm" style="width: auto;"
@@ -61,7 +61,7 @@
       <option [selected]="pageSize()===25"  value="25">25</option>
       <option [selected]="pageSize()===50"  value="50">50</option>
       <option [selected]="pageSize()===100" value="100">100</option>
-      <option [selected]="pageSize()===total()" value="{{ total() }}">max</option>
+      <option [selected]="pageSize()===total" value="{{ total }}">max</option>
     </select>
   </div>
 </div>
@@ -89,9 +89,9 @@
     </tr>
     </thead>
 
-    @if (paged().length > 0) {
+    @if (paged.length > 0) {
       <tbody>
-        @for (e of paged(); track trackRow($index, e)){
+        @for (e of paged; track trackRow($index, e)){
           <tr (click)="openModal(e)"  data-bs-toggle="modal" data-bs-target="#sectionDetailModal" [attr.data-bs-whatever]="e">
             <td class="text-truncate" style="width: 25vw; max-width: 25vw;" title="{{ e.section_full }}">{{ e.section_full }}</td>
             <td><code>{{ hex(e.address) }}</code></td>
@@ -122,15 +122,15 @@
 
     <li class="page-item disabled">
         <span class="page-link bg-light">
-          Page {{ page() }} / {{ totalPages() }}
+          Page {{ page() }} / {{ totalPages }}
         </span>
     </li>
 
-    <li class="page-item" [class.disabled]="page()===totalPages()">
+    <li class="page-item" [class.disabled]="page()===totalPages">
       <button class="page-link" (click)="next()">Suiv.</button>
     </li>
-    <li class="page-item" [class.disabled]="page()===totalPages()">
-      <button class="page-link" (click)="goto(totalPages())">»</button>
+    <li class="page-item" [class.disabled]="page()===totalPages">
+      <button class="page-link" (click)="goto(totalPages)">»</button>
     </li>
   </ul>
 </nav>
@@ -146,16 +146,16 @@
     <div class="modal-content">
       <div class="modal-header">
         <h1 class="modal-title fs-5" id="exampleModalLabel">
-          Détail de {{ selectedEntry.section_full }}
+          Détail de {{ selectedModalEntry.section_full }}
         </h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <p><strong>Section :</strong> {{ selectedEntry.section }}</p>
-        <p><strong>Adresse :</strong> {{ hex(selectedEntry.address) }}</p>
-        <p><strong>Taille :</strong> {{ bytes(selectedEntry.size) }}</p>
-        <p><strong>Mémoire :</strong> {{ selectedEntry.memory_type }}</p>
-        <p><strong>Fichier :</strong> {{ selectedEntry.file }}</p>
+        <p><strong>Section :</strong> {{ selectedModalEntry.section }}</p>
+        <p><strong>Adresse :</strong> {{ hex(selectedModalEntry.address) }}</p>
+        <p><strong>Taille :</strong> {{ bytes(selectedModalEntry.size) }}</p>
+        <p><strong>Mémoire :</strong> {{ selectedModalEntry.memory_type }}</p>
+        <p><strong>Fichier :</strong> {{ selectedModalEntry.file }}</p>
       </div>
     </div>
   </div>
