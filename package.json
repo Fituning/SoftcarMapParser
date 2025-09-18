@@ -17,7 +17,7 @@
     "dist:all": "npm run build:ng && npm run build:electron && electron-builder -mwl"
   },
   "build": {
-    "publish": "never",
+    "publish": null,
     "appId": "com.softcar.mapparser",
     "productName": "Softcar Map Parser",
     "files": [
