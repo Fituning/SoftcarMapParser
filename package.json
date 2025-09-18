@@ -1,6 +1,6 @@
 {
   "name": "softcar-map-parser",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "main": "main-process.js",
   "scripts": {
     "ng": "ng",
@@ -23,7 +23,9 @@
     "files": [
       "dist/**/*",
       "main-process.js",
-      "preload.js"
+      "preload.js",
+      "package.json",
+      "src/shared/**/*"
     ],
     "win": {
       "target": "nsis",

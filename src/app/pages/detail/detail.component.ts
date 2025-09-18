@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ParsedDataService } from '../../shared/parsed-data.service';
 import { FileStateService } from '../../shared/file-state.service';
 import { FormsModule } from '@angular/forms';
-import { MapEntry } from '../../../types/map-types';
+import { MapEntry } from '../../../shared/map-types';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faSquareCaretDown, faSquareCaretUp, faSquare } from '@fortawesome/free-regular-svg-icons';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';

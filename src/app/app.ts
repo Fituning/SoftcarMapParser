@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { FileStateService } from './shared/file-state.service';
 import { SidebarService } from './shared/sidebar.service';
 import { DeviceProfileService } from './shared/device-profile.service';
-import {MapEntry} from '../types/map-types';
+import {MapEntry} from '../shared/map-types';
 import {ParsedDataService} from './shared/parsed-data.service';
 
 @Component({

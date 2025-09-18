@@ -10,7 +10,7 @@ import {
   ApexYAxis,
   NgApexchartsModule
 } from 'ng-apexcharts';
-import {MapEntry, MemoryType} from '../../../../types/map-types';
+import {MapEntry, MemoryType} from '../../../../shared/map-types';
 import {DeviceProfile} from '../../../shared/device-profile.service';
 
 @Component({

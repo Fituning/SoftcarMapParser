@@ -2,7 +2,7 @@
 import { app, BrowserWindow, ipcMain, dialog } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
-import {MapEntry, MemoryRegion, MemoryType, SymbolEntry} from './src/types/map-types';
+import {MapEntry, MemoryRegion, MemoryType, SymbolEntry} from './src/shared/map-types';
 
 // ======== Parsing (TS port de ton Python) ========
 function parseSymbols(symbols_raw: string): SymbolEntry[] {

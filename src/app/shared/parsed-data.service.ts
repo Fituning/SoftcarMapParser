@@ -1,5 +1,5 @@
 import {Injectable, signal} from '@angular/core';
-import {MapEntry} from '../../types/map-types';
+import {MapEntry} from '../../shared/map-types';
 
 @Injectable({ providedIn: 'root' })
 export class ParsedDataService {

@@ -11,7 +11,7 @@ import {
   ApexYAxis,
   NgApexchartsModule
 } from 'ng-apexcharts';
-import {MapEntry, MemoryType} from '../../../../types/map-types';
+import {MapEntry, MemoryType} from '../../../../shared/map-types';
 
 type Row = { name: string; bytes: number; pct: number };
 

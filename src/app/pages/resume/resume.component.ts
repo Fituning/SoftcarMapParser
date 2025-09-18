@@ -4,7 +4,7 @@ import { FileStateService } from '../../shared/file-state.service';
 import { ParsedDataService } from '../../shared/parsed-data.service';
 import { MemoryBarApex } from './charts/memory-bar.apex';
 import {MemorySectionsBarsApex} from './charts/memory-sections-bars.apex';
-import {MemoryType} from '../../../types/map-types';
+import {MemoryType} from '../../../shared/map-types';
 import {DeviceMemoryFillApex} from './charts/device-memory-fill/device-memory-fill.apex';
 
 @Component({

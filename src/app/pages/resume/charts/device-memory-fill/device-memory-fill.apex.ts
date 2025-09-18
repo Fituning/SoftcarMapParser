@@ -9,7 +9,7 @@ import {
   ApexYAxis,
   NgApexchartsModule
 } from 'ng-apexcharts';
-import {MapEntry, MemoryType} from '../../../../../types/map-types';
+import {MapEntry, MemoryType} from '../../../../../shared/map-types';
 import {DeviceProfileService} from '../../../../shared/device-profile.service';
 
 export type ChartOptions = {
