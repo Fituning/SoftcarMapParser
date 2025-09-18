@@ -13,14 +13,7 @@
       <div class="card mb-3">
         <div class="card-body">
           <div class="row g-2 align-items-end">
-            <div class="col-12 col-md-4">
-              <label class="form-label">Recherche texte</label>
-              <input class="form-control" placeholder="ex: .text / driver.c"
-                     [value]="(filterText())" disabled><!-- todo <input class="form-control" placeholder="ex: .text / driver.c"
-               [(ngModel)]="(filterText())" disabled>  -->
-              <!-- désactivé pour l’instant -->
-            </div>
-            <div class="col-6 col-md-3">
+            <div class="col-6 col-md-4">
               <label for="sections" class="form-label">Sections</label>
               <ng-multiselect-dropdown
                 [data]="sections()"
@@ -29,7 +22,7 @@
                 [settings]="dropdownSettings">
               </ng-multiselect-dropdown>
             </div>
-            <div class="col-6 col-md-3">
+            <div class="col-6 col-md-4">
               <label class="form-label">Type mémoire</label>
               <ng-multiselect-dropdown
                 [data]="memoryType()"

@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, Signal, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ParsedDataService } from '../../shared/parsed-data.service';
 import { FileStateService } from '../../shared/file-state.service';
@@ -77,8 +77,8 @@ export class DetailComponent {
   constructor() {
     // Re-run computeEntries whenever a filter changes
     effect(() => {
-      const sections = this.selectedSections();
-      const memoryType = this.selectedMemoryTypes();
+      this.selectedSections();
+      this.selectedMemoryTypes();
       this.computeEntries();
     });
   }
